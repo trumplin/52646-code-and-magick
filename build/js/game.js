@@ -380,19 +380,55 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          this._drawString('Вы победили!', 210, 70, 200);
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          this._drawString('Вы проиграли', 210, 70, 200);
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          this._drawString('Игра на паузе и это не шутка мужик, так что жми Esc и продолжай играть', 210, 70, 200);
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          this._drawString('Пауза пауза пауза пауза Пауза пауза пауза пауза Пауза пауза пауза пауза Пауза пауза пауза пауза', 210, 70, 200);
           break;
       }
     },
+
+
+    _drawRect: function(startx, starty, width, height, shadow) {
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.fillRect(startx + shadow, starty + shadow, width, height);
+      this.ctx.fillStyle = '#fff';
+      this.ctx.fillRect(startx, starty, width, height);
+    },
+
+
+    _drawString: function(message, startX, startY, maxWidth) {
+      var lineHeight = 25;
+      var shadowRect = 10;
+      var words = message.split(' ');
+      var countWords = words.length;
+      var line = '';
+      for (var n = 0; n < countWords; n++) {
+        var testLine = line + words[n] + ' ';
+        var testWidth = this.ctx.measureText(testLine).width;
+        if (testWidth > maxWidth) {
+          this._drawRect(startX, startY, maxWidth, lineHeight, shadowRect);
+          this.ctx.fillStyle = '#000';
+          this.ctx.font = '16px PT Mono';
+          this.ctx.fillText(line, startX + 10, startY + lineHeight - 5);
+          line = words[n] + ' ';
+          startY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      this._drawRect(startX, startY, maxWidth, lineHeight, shadowRect);
+      this.ctx.fillStyle = '#000';
+      this.ctx.font = '16px PT Mono';
+      this.ctx.fillText(line, startX + 10, startY + lineHeight - 5);
+    },
+
 
     /**
      * Предзагрузка необходимых изображений для уровня.
