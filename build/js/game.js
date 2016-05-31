@@ -380,16 +380,16 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          this._drawString('Вы победили!', 210, 70, 200);
+          this._showMessage('Вы победили!', 210, 70, 200);
           break;
         case Verdict.FAIL:
-          this._drawString('Вы проиграли', 210, 70, 200);
+          this._showMessage('Вы проиграли', 210, 70, 200);
           break;
         case Verdict.PAUSE:
-          this._drawString('Игра на паузе и это не шутка мужик, так что жми Esc и продолжай играть', 210, 70, 200);
+          this._showMessage('Игра на паузе и это не шутка мужик, так что жми Esc и продолжай играть', 210, 70, 200);
           break;
         case Verdict.INTRO:
-          this._drawString('Пауза пауза пауза пауза Пауза пауза пауза пауза Пауза пауза пауза пауза Пауза пауза пауза пауза', 210, 70, 200);
+          this._showMessage('Пауза пауза пауза пауза Пауза пауза пауза пауза Пауза пауза пауза пауза Пауза пауза пауза пауза', 210, 70, 200);
           break;
       }
     },
@@ -402,10 +402,15 @@
       this.ctx.fillRect(startx, starty, width, height);
     },
 
+    _drawString: function(line, startX, startY, lineHeight) {
+      this.ctx.fillStyle = '#000';
+      this.ctx.font = '16px PT Mono';
+      this.ctx.fillText(line, startX + 10, startY + lineHeight - 5);
+    },
 
-    _drawString: function(message, startX, startY, maxWidth) {
-      var lineHeight = 25;
-      var shadowRect = 10;
+    _showMessage: function(message, startX, startY, maxWidth) {
+      var LINEHEIGHT = 25;
+      var SHADOWRECT = 10;
       var words = message.split(' ');
       var countWords = words.length;
       var line = '';
@@ -413,20 +418,16 @@
         var testLine = line + words[n] + ' ';
         var testWidth = this.ctx.measureText(testLine).width;
         if (testWidth > maxWidth) {
-          this._drawRect(startX, startY, maxWidth, lineHeight, shadowRect);
-          this.ctx.fillStyle = '#000';
-          this.ctx.font = '16px PT Mono';
-          this.ctx.fillText(line, startX + 10, startY + lineHeight - 5);
+          this._drawRect(startX, startY, maxWidth, LINEHEIGHT, SHADOWRECT);
+          this._drawString(line, startX, startY, LINEHEIGHT);
           line = words[n] + ' ';
-          startY += lineHeight;
+          startY += LINEHEIGHT;
         } else {
           line = testLine;
         }
       }
-      this._drawRect(startX, startY, maxWidth, lineHeight, shadowRect);
-      this.ctx.fillStyle = '#000';
-      this.ctx.font = '16px PT Mono';
-      this.ctx.fillText(line, startX + 10, startY + lineHeight - 5);
+      this._drawRect(startX, startY, maxWidth, LINEHEIGHT, SHADOWRECT);
+      this._drawString(line, startX, startY, LINEHEIGHT);
     },
 
 
