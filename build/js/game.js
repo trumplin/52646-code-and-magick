@@ -383,32 +383,20 @@
           this._showMessage('Вы победили!', 210, 70, 200);
           break;
         case Verdict.FAIL:
-          this._showMessage('Вы проиграли', 210, 70, 200);
+          this._showMessage('К сожалению вы проиграли', 210, 70, 200);
           break;
         case Verdict.PAUSE:
           this._showMessage('Игра на паузе и это не шутка мужик, так что жми Esc и продолжай играть', 210, 70, 200);
           break;
         case Verdict.INTRO:
-          this._showMessage('Пауза пауза пауза пауза Пауза пауза пауза пауза Пауза пауза пауза пауза Пауза пауза пауза пауза', 210, 70, 200);
+          this._showMessage('Добро пожаловать! Жми пробел и играй.', 210, 70, 200);
           break;
       }
     },
 
 
-    _drawRect: function(startx, starty, width, height, shadow) {
-      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      this.ctx.fillRect(startx + shadow, starty + shadow, width, height);
-      this.ctx.fillStyle = '#fff';
-      this.ctx.fillRect(startx, starty, width, height);
-    },
-
-    _drawString: function(line, startX, startY, lineHeight) {
-      this.ctx.fillStyle = '#000';
-      this.ctx.font = '16px PT Mono';
-      this.ctx.fillText(line, startX + 10, startY + lineHeight - 5);
-    },
-
     _showMessage: function(message, startX, startY, maxWidth) {
+      this.ctx.font = '16px PT Mono';
       var LINEHEIGHT = 25;
       var SHADOWRECT = 10;
       var words = message.split(' ');
@@ -430,6 +418,18 @@
       this._drawString(line, startX, startY, LINEHEIGHT);
     },
 
+
+    _drawRect: function(startx, starty, width, height, shadow) {
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.fillRect(startx + shadow, starty + shadow, width, height);
+      this.ctx.fillStyle = '#fff';
+      this.ctx.fillRect(startx, starty, width, height);
+    },
+
+    _drawString: function(line, startX, startY, lineHeight) {
+      this.ctx.fillStyle = '#000';
+      this.ctx.fillText(line, startX + 10, startY + lineHeight - 5);
+    },
 
     /**
      * Предзагрузка необходимых изображений для уровня.
