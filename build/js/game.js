@@ -380,18 +380,55 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          this._showMessage('Вы победили!', 210, 70, 200);
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          this._showMessage('К сожалению вы проиграли', 210, 70, 200);
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          this._showMessage('Игра на паузе и это не шутка мужик, так что жми Esc и продолжай играть', 210, 70, 200);
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          this._showMessage('Добро пожаловать! Жми пробел и играй.', 210, 70, 200);
           break;
       }
+    },
+
+
+    _showMessage: function(message, startX, startY, maxWidth) {
+      this.ctx.font = '16px PT Mono';
+      var LINEHEIGHT = 25;
+      var SHADOWRECT = 10;
+      var words = message.split(' ');
+      var countWords = words.length;
+      var line = '';
+      for (var n = 0; n < countWords; n++) {
+        var testLine = line + words[n] + ' ';
+        var testWidth = this.ctx.measureText(testLine).width;
+        if (testWidth > maxWidth) {
+          this._drawRect(startX, startY, maxWidth, LINEHEIGHT, SHADOWRECT);
+          this._drawString(line, startX, startY, LINEHEIGHT);
+          line = words[n] + ' ';
+          startY += LINEHEIGHT;
+        } else {
+          line = testLine;
+        }
+      }
+      this._drawRect(startX, startY, maxWidth, LINEHEIGHT, SHADOWRECT);
+      this._drawString(line, startX, startY, LINEHEIGHT);
+    },
+
+
+    _drawRect: function(startx, starty, width, height, shadow) {
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.fillRect(startx + shadow, starty + shadow, width, height);
+      this.ctx.fillStyle = '#fff';
+      this.ctx.fillRect(startx, starty, width, height);
+    },
+
+    _drawString: function(line, startX, startY, lineHeight) {
+      this.ctx.fillStyle = '#000';
+      this.ctx.fillText(line, startX + 10, startY + lineHeight - 5);
     },
 
     /**
