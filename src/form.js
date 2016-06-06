@@ -37,21 +37,21 @@
 
   for (var y = 0; y < reviewMark.length; y++) {
     reviewMark[y].onclick = function() {
-      if (this.value < 3 ) {
+      selectedReviewMark = this.value;
+      if (selectedReviewMark < 3 ) {
         reviewText.required = true;
-        submitButton.disabled = true;
         if (reviewText.value === '') {
           labelReviewFields.style.visibility = 'visible';
           labelText.innerHTML = 'отзыв';
+          submitButton.disabled = true;
         } else{
-          submitButton.disabled = false;
+          check();
         }
       } else {
-        reviewText.required = false;
-        submitButton.disabled = false;
+        labelReviewFields.style.visibility = 'hidden';
         labelText.innerHTML = '';
+        check();
       }
-      selectedReviewMark = this.value;
     };
   }
 
