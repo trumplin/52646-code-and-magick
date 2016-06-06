@@ -10,13 +10,13 @@
   var labelText = document.querySelector('.review-fields-text');
   var labelName = document.querySelector('.review-fields-name');
   var submitButton = document.querySelector('.review-submit');
+  var labelReviewFields = document.querySelector('.review-fields');
   var selectedReviewMark;
   reviewName.required = true;
   submitButton.disabled = true;
   labelText.innerHTML = '';
-  reviewName.onchange = check;
-  reviewText.onchange = check;
-
+  reviewName.oninput = check;
+  reviewText.oninput = check;
 
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
@@ -41,11 +41,14 @@
         reviewText.required = true;
         submitButton.disabled = true;
         if (reviewText.value === '') {
+          labelReviewFields.style.visibility = 'visible';
           labelText.innerHTML = 'отзыв';
+        } else{
+          submitButton.disabled = false;
         }
       } else {
         reviewText.required = false;
-        submitButton.disabled = true;
+        submitButton.disabled = false;
         labelText.innerHTML = '';
       }
       selectedReviewMark = this.value;
@@ -58,7 +61,6 @@
     } else {
       labelName.innerHTML = 'имя';
     }
-
     if (reviewText.value) {
       labelText.innerHTML = '';
     } else {
@@ -66,14 +68,14 @@
         labelText.innerHTML = 'отзыв';
       }
     }
-
     if (labelName.innerHTML === '' && labelText.innerHTML === '') {
       submitButton.disabled = false;
+      labelReviewFields.style.visibility = 'hidden';
       console.log(selectedReviewMark + ' | ' + reviewName.value + ' ' + reviewText.value);
     } else{
       submitButton.disabled = true;
+      labelReviewFields.style.visibility = 'visible';
       console.log('переделывай');
     }
   }
-
 })();
