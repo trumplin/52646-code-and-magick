@@ -16,18 +16,9 @@ var DEFAULTMARK = 3;
   var submitButton = document.querySelector('.review-submit');
   var labelReviewFields = document.querySelector('.review-fields');
   var selectedReviewMark = browserCookies.get('mark') || DEFAULTMARK;
-  reviewName.required = true;
-  labelText.innerHTML = '';
   reviewName.value = browserCookies.get('name') || '';
   reviewName.oninput = check;
   reviewText.oninput = check;
-
-  if (browserCookies.get('name')) {
-    submitButton.disabled = false;
-    labelReviewFields.style.visibility = 'hidden';
-  } else{
-    submitButton.disabled = true;
-  }
 
   for (var i = 0; i < reviewMark.length; i++) {
     if (reviewMark[i].value === selectedReviewMark) {
@@ -35,6 +26,8 @@ var DEFAULTMARK = 3;
       break;
     }
   }
+
+  check();
 
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
@@ -59,19 +52,11 @@ var DEFAULTMARK = 3;
     var currentMonth = now.getMonth();
     var currentYear = now.getFullYear();
     var myYear;
-
-    switch(true) {
-      case currentMonth === MYMONTH && currentDate === MYDATE:
-        myYear = currentYear;
-        break;
-      case currentMonth <= MYMONTH && currentDate <= MYDATE:
-        myYear = currentYear - 1;
-        break;
-      case currentMonth > MYMONTH:
-        myYear = currentYear;
-        break;
+    if (currentMonth >= MYMONTH && currentDate >= MYDATE) {
+      myYear = currentYear;
+    } else {
+      myYear = currentYear - 1;
     }
-
     var birthday = new Date(myYear, MYMONTH, MYDATE);
     var difference = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
     return difference;
@@ -103,13 +88,13 @@ var DEFAULTMARK = 3;
     } else {
       labelName.innerHTML = 'имя';
     }
-    if (reviewText.value) {
-      labelText.innerHTML = '';
+
+    if ((selectedReviewMark < 3) && (reviewText.value === '')) {
+      labelText.innerHTML = 'отзыв';
     } else {
-      if (selectedReviewMark < 3) {
-        labelText.innerHTML = 'отзыв';
-      }
+      labelText.innerHTML = '';
     }
+
     if (labelName.innerHTML === '' && labelText.innerHTML === '') {
       submitButton.disabled = false;
       labelReviewFields.style.visibility = 'hidden';
