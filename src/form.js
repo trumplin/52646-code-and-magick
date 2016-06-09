@@ -65,20 +65,7 @@ var DEFAULTMARK = 3;
   for (var y = 0; y < reviewMark.length; y++) {
     reviewMark[y].onclick = function() {
       selectedReviewMark = this.value;
-      if (selectedReviewMark < 3 ) {
-        reviewText.required = true;
-        if (reviewText.value === '') {
-          labelReviewFields.style.visibility = 'visible';
-          labelText.innerHTML = 'отзыв';
-          submitButton.disabled = true;
-        } else{
-          check();
-        }
-      } else {
-        labelReviewFields.style.visibility = 'hidden';
-        labelText.innerHTML = '';
-        check();
-      }
+      check();
     };
   }
 
