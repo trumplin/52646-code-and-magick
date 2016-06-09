@@ -1,4 +1,8 @@
 'use strict';
+var browserCookies = require('browser-cookies');
+var MYDATE = 9;
+var MYMONTH = 6;
+var DEFAULTMARK = 3;
 
 (function() {
   var formContainer = document.querySelector('.overlay-container');
@@ -11,12 +15,26 @@
   var labelName = document.querySelector('.review-fields-name');
   var submitButton = document.querySelector('.review-submit');
   var labelReviewFields = document.querySelector('.review-fields');
-  var selectedReviewMark;
+  var selectedReviewMark = browserCookies.get('mark') || DEFAULTMARK;
   reviewName.required = true;
-  submitButton.disabled = true;
   labelText.innerHTML = '';
+  reviewName.value = browserCookies.get('name') || '';
   reviewName.oninput = check;
   reviewText.oninput = check;
+
+  if (browserCookies.get('name')) {
+    submitButton.disabled = false;
+    labelReviewFields.style.visibility = 'hidden';
+  } else{
+    submitButton.disabled = true;
+  }
+
+  for (var i = 0; i < reviewMark.length; i++) {
+    if (reviewMark[i].value === selectedReviewMark) {
+      reviewMark[i].checked = true;
+      break;
+    }
+  }
 
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
@@ -28,11 +46,35 @@
     formContainer.classList.add('invisible');
   };
 
-  for (var i = 0; i < reviewMark.length; i++) {
-    if (reviewMark[i].checked) {
-      selectedReviewMark = reviewMark[i].value;
-      break;
+  submitButton.onclick = function(evt) {
+    evt.preventDefault();
+    var expires = getExpires();
+    browserCookies.set('mark', selectedReviewMark, {expires: expires});
+    browserCookies.set('name', reviewName.value, {expires: expires});
+  };
+
+  function getExpires() {
+    var now = new Date();
+    var currentDate = now.getDate();
+    var currentMonth = now.getMonth();
+    var currentYear = now.getFullYear();
+    var myYear;
+
+    switch(true) {
+      case currentMonth === MYMONTH && currentDate === MYDATE:
+        myYear = currentYear;
+        break;
+      case currentMonth <= MYMONTH && currentDate <= MYDATE:
+        myYear = currentYear - 1;
+        break;
+      case currentMonth > MYMONTH:
+        myYear = currentYear;
+        break;
     }
+
+    var birthday = new Date(myYear, MYMONTH, MYDATE);
+    var difference = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
+    return difference;
   }
 
   for (var y = 0; y < reviewMark.length; y++) {
@@ -71,11 +113,9 @@
     if (labelName.innerHTML === '' && labelText.innerHTML === '') {
       submitButton.disabled = false;
       labelReviewFields.style.visibility = 'hidden';
-      console.log(selectedReviewMark + ' | ' + reviewName.value + ' ' + reviewText.value);
     } else{
       submitButton.disabled = true;
       labelReviewFields.style.visibility = 'visible';
-      console.log('переделывай');
     }
   }
 })();
