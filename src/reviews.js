@@ -1,12 +1,10 @@
 'use strict';
 (function() {
   var REVIEWS_LIST_URL = '//o0.github.io/assets/json/reviews.json';
-  var TEXT_NODE_TYPE = 3;
-  var MILLISECONDS_TO_DAYS = 1000 * 60 * 60 * 24;
+  var DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
   var BAD_RATING = 2;
   var GOOD_RATING = 3;
   var EMPTY_ARRAY_MESSAGE = 'По заданным критериям, нет ниодного отзыва';
-
   var reviewsFilter = document.querySelector('.reviews-filter');
   var reviewsContainer = document.querySelector('.reviews-list');
   var reviewsBlock = document.querySelector('.reviews');
@@ -27,11 +25,12 @@
   } else{
     elementToClone = templateElement.querySelector('.review');
   }
+
   reviewsFilter.classList.add('invisible');
+  reviewsContainer.classList.add('.reviews-list-loading');
 
   var getReviewElement = function(data, container) {
     var element = elementToClone.cloneNode(true);
-
     var reviewAuthorImage = new Image(124, 124);
 
     reviewAuthorImage.onload = function(evt) {
@@ -45,35 +44,18 @@
     reviewAuthorImage.src = data.author['picture'];
     reviewAuthorImage.title = data.author['name'];
     reviewAuthorImage.alt = data.author['name'];
-
     element.querySelector('.review-text').textContent = data.description;
     element.querySelector('.review-rating').textContent = data.rating;
     element.querySelector('.review-author').alt = reviewAuthorImage.alt;
     element.querySelector('.review-author').title = reviewAuthorImage.title;
-    reviewsFilter.classList.remove('invisible');
     container.appendChild(element);
     return element;
   };
 
-
-  var hideReviewsBlockChilds = function(collection) {
-    for (var i = 0; i < collection.length; i++ ) {
-      if (collection[i].nodeType !== TEXT_NODE_TYPE) {
-        collection[i].style.display = 'none';
-      }
-    }
-  };
-
-  var showReviewsBlockChilds = function(collection) {
-    for (var i = 0; i < collection.length; i++ ) {
-      if (collection[i].nodeType !== TEXT_NODE_TYPE) {
-        collection[i].style.display = 'block';
-      }
-    }
-  };
-
   var renderReviews = function(reviewsArray) {
     reviewsContainer.innerHTML = '';
+    reviewsFilter.classList.remove('invisible');
+    reviewsBlock.classList.remove('reviews-list-loading');
     reviewsArray.forEach(function(review) {
       getReviewElement(review, reviewsContainer);
     });
@@ -91,8 +73,8 @@
         var today = new Date();
         reviewsToFilter = reviewsArray.filter(function(number) {
           var dateReview = new Date(number.date);
-          var daysDifferent = Math.floor((today - dateReview) / MILLISECONDS_TO_DAYS);
-          if ( daysDifferent < 5 && daysDifferent > 0 ) {
+          var daysDifferent = Math.floor((today - dateReview) / DAY_IN_MILLIS);
+          if ( daysDifferent < 4 && daysDifferent > 0 ) {
             return number;
           } else {
             return null;
@@ -170,20 +152,8 @@
     xhr.open('GET', REVIEWS_LIST_URL);
 
     xhr.send();
-
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState !== 4) {
-        reviewsBlock.classList.add('reviews-list-loading');
-        hideReviewsBlockChilds(reviewsBlock.childNodes);
-      } else {
-        reviewsBlock.classList.remove('reviews-list-loading');
-        showReviewsBlockChilds(reviewsBlock.childNodes);
-      }
-    };
-
     xhr.onerror = function() {
       reviewsBlock.classList.add('reviews-load-failure');
-      hideReviewsBlockChilds(reviewsBlock.childNodes);
     };
   };
 
