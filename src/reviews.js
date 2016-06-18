@@ -27,7 +27,7 @@
   }
 
   reviewsFilter.classList.add('invisible');
-  reviewsContainer.classList.add('reviews-list-loading');
+  reviewsBlock.classList.add('reviews-list-loading');
 
   var getReviewElement = function(data, container) {
     var element = elementToClone.cloneNode(true);
