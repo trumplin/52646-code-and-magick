@@ -149,12 +149,13 @@
       callback(loadedData);
     };
 
-    xhr.open('GET', REVIEWS_LIST_URL);
-
-    xhr.send();
     xhr.onerror = function() {
       reviewsBlock.classList.add('reviews-load-failure');
     };
+    xhr.open('GET', REVIEWS_LIST_URL);
+
+    xhr.send();
+
   };
 
   getReviews(function(loadedReviews) {
