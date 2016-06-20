@@ -238,6 +238,7 @@
     return state;
   };
 
+
   /**
    * Конструктор объекта Game. Создает canvas, добавляет обработчики событий
    * и показывает приветственный экран.
@@ -255,6 +256,7 @@
 
     this._onKeyDown = this._onKeyDown.bind(this);
     this._onKeyUp = this._onKeyUp.bind(this);
+    this._onScroll = this._onScroll.bind(this);
     this._pauseListener = this._pauseListener.bind(this);
   };
 
@@ -652,6 +654,21 @@
       }
     },
 
+
+    _onScroll: function() {
+      var THROTTLE_DELAY = 100;
+      var lastCall = Date.now();
+      var clouds = document.querySelector('.header-clouds');
+      console.log('скрол произошел');
+      if (Date.now() - lastCall >= THROTTLE_DELAY) {
+        console.log('прячем облака');
+        clouds.style.display = 'none';
+      } else {
+        console.log('тротлим');
+        lastCall = Date.now();
+      }
+    },
+
     /**
      * @param {KeyboardEvent} evt [description]
      * @private
@@ -702,16 +719,19 @@
       }
     },
 
+
     /** @private */
     _initializeGameListeners: function() {
       window.addEventListener('keydown', this._onKeyDown);
       window.addEventListener('keyup', this._onKeyUp);
+      window.addEventListener('scroll', this._onScroll);
     },
 
     /** @private */
     _removeGameListeners: function() {
       window.removeEventListener('keydown', this._onKeyDown);
       window.removeEventListener('keyup', this._onKeyUp);
+      //window.removeEventListener('scroll', this._onScroll);
     }
   };
 
