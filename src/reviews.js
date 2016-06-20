@@ -141,8 +141,8 @@
 
   var setFiltersEnabled = function() {
     reviewsFilter.addEventListener('click', function(evt) {
-      if (evt.target.classList.contains('reviews-filter-item')) {
-        setFilterEnabled(evt.target.htmlFor);
+      if (evt.target.name === 'reviews') {
+        setFilterEnabled(evt.target.id);
       }
     });
   };
@@ -163,8 +163,8 @@
     xhr.send();
   };
 
-  var isNextPageAvailable = function(review, page, pageSize) {
-    return Math.floor(review.length / pageSize) - page;
+  var isNextPageAvailable = function(review, page) {
+    return (page + 1) < (Math.ceil(review.length / PAGE_SIZE));
   };
 
   moreReviewsButton.onclick = function() {
@@ -174,7 +174,7 @@
   };
 
   var setMoreReviewsButtonEnabled = function() {
-    if (isNextPageAvailable(filteredReviews, pageNumber, PAGE_SIZE) > 1) {
+    if (isNextPageAvailable(filteredReviews, pageNumber)) {
       moreReviewsButton.classList.remove('invisible');
     } else {
       moreReviewsButton.classList.add('invisible');
