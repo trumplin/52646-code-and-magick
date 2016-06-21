@@ -168,6 +168,11 @@
     }
   };
 
+  var THROTTLE_DELAY = 10;
+  var IMAGE_BACKGROUND_WIDTH = 1024;
+  var lastCall = Date.now();
+  var shiftBackground = 0;
+  var scrollHeight = window.pageYOffset;
   /**
    * ID возможных ответов функций, проверяющих успех прохождения уровня.
    * CONTINUE говорит о том, что раунд не закончен и игру нужно продолжать,
@@ -238,6 +243,7 @@
     return state;
   };
 
+
   /**
    * Конструктор объекта Game. Создает canvas, добавляет обработчики событий
    * и показывает приветственный экран.
@@ -255,6 +261,7 @@
 
     this._onKeyDown = this._onKeyDown.bind(this);
     this._onKeyUp = this._onKeyUp.bind(this);
+    this._onScroll = this._onScroll.bind(this);
     this._pauseListener = this._pauseListener.bind(this);
   };
 
@@ -652,6 +659,37 @@
       }
     },
 
+    _onScroll: function() {
+      var clouds = document.querySelector('.header-clouds');
+      var cloudsPosition = clouds.getBoundingClientRect();
+      var cloudsBottomY = cloudsPosition.bottom;
+      var demo = document.querySelector('.demo');
+      var demoPosition = demo.getBoundingClientRect();
+      var demoBottomY = demoPosition.bottom;
+      var screenWidth = cloudsPosition.right - cloudsPosition.left;
+      var leftImageCcoordinate = Math.floor((screenWidth / 2 ) - ( IMAGE_BACKGROUND_WIDTH / 2 ));
+
+      if (demoBottomY < 0) {
+        game.setGameStatus(Game.Verdict.PAUSE);
+      }
+      if ((Date.now() - lastCall >= THROTTLE_DELAY)) {
+        if (cloudsBottomY > 0) {
+          if (window.pageYOffset > scrollHeight) {
+            clouds.style.backgroundPositionX = leftImageCcoordinate + shiftBackground + 'px';
+            shiftBackground -= 1;
+          } else {
+            clouds.style.backgroundPositionX = leftImageCcoordinate + shiftBackground + 'px';
+            shiftBackground += 1;
+          }
+        } else
+          if (demoBottomY < 0) {
+            game.setGameStatus(Game.Verdict.PAUSE);
+          }
+      }
+      lastCall = Date.now();
+      scrollHeight = window.pageYOffset;
+    },
+
     /**
      * @param {KeyboardEvent} evt [description]
      * @private
@@ -702,16 +740,19 @@
       }
     },
 
+
     /** @private */
     _initializeGameListeners: function() {
       window.addEventListener('keydown', this._onKeyDown);
       window.addEventListener('keyup', this._onKeyUp);
+      window.addEventListener('scroll', this._onScroll);
     },
 
     /** @private */
     _removeGameListeners: function() {
       window.removeEventListener('keydown', this._onKeyDown);
       window.removeEventListener('keyup', this._onKeyUp);
+      //window.removeEventListener('scroll', this._onScroll);
     }
   };
 
