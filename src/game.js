@@ -168,6 +168,11 @@
     }
   };
 
+  var THROTTLE_DELAY = 10;
+  var IMAGE_BACKGROUND_WIDTH = 1024;
+  var lastCall = Date.now();
+  var shiftBackground = 0;
+  var scrollHeight = window.pageYOffset;
   /**
    * ID возможных ответов функций, проверяющих успех прохождения уровня.
    * CONTINUE говорит о том, что раунд не закончен и игру нужно продолжать,
@@ -654,19 +659,35 @@
       }
     },
 
-
     _onScroll: function() {
-      var THROTTLE_DELAY = 100;
-      var lastCall = Date.now();
       var clouds = document.querySelector('.header-clouds');
-      console.log('скрол произошел');
-      if (Date.now() - lastCall >= THROTTLE_DELAY) {
-        console.log('прячем облака');
-        clouds.style.display = 'none';
-      } else {
-        console.log('тротлим');
-        lastCall = Date.now();
+      var cloudsPosition = clouds.getBoundingClientRect();
+      var cloudsBottomY = cloudsPosition.bottom;
+      var demo = document.querySelector('.demo');
+      var demoPosition = demo.getBoundingClientRect();
+      var demoBottomY = demoPosition.bottom;
+      var screenWidth = cloudsPosition.right - cloudsPosition.left;
+      var leftImageCcoordinate = Math.floor((screenWidth / 2 ) - ( IMAGE_BACKGROUND_WIDTH / 2 ));
+
+      if (demoBottomY < 0) {
+        game.setGameStatus(Game.Verdict.PAUSE);
       }
+      if ((Date.now() - lastCall >= THROTTLE_DELAY)) {
+        if (cloudsBottomY > 0) {
+          if (window.pageYOffset > scrollHeight) {
+            clouds.style.backgroundPositionX = leftImageCcoordinate + shiftBackground + 'px';
+            shiftBackground -= 1;
+          } else {
+            clouds.style.backgroundPositionX = leftImageCcoordinate + shiftBackground + 'px';
+            shiftBackground += 1;
+          }
+        } else
+          if (demoBottomY < 0) {
+            game.setGameStatus(Game.Verdict.PAUSE);
+          }
+      }
+      lastCall = Date.now();
+      scrollHeight = window.pageYOffset;
     },
 
     /**
