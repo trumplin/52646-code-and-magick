@@ -168,7 +168,7 @@
     }
   };
 
-  var THROTTLE_DELAY = 10;
+  var THROTTLE_DELAY = 100;
   var IMAGE_BACKGROUND_WIDTH = 1024;
   var lastCall = Date.now();
   var shiftBackground = 0;
@@ -659,6 +659,30 @@
       }
     },
 
+    _isDemoVisible: function(demoDiv) {
+      return demoDiv > 0;
+    },
+
+    _isCloudsVisible: function(cloudsDiv) {
+      return cloudsDiv > 0;
+    },
+
+    _cloudLeftRight: function(div, scroll, leftCoord, flag) {
+      if (flag) {
+        if (window.pageYOffset > scrollHeight) {
+          div.style.backgroundPositionX = leftCoord + shiftBackground + 'px';
+          shiftBackground -= 1;
+          console.log('влево');
+        } else {
+          div.style.backgroundPositionX = leftCoord + shiftBackground + 'px';
+          shiftBackground += 1;
+          console.log('вправо');
+        }
+      } else {
+        console.log('не двигаем');
+      }
+    },
+
     _onScroll: function() {
       var clouds = document.querySelector('.header-clouds');
       var cloudsPosition = clouds.getBoundingClientRect();
@@ -669,23 +693,20 @@
       var screenWidth = cloudsPosition.right - cloudsPosition.left;
       var leftImageCcoordinate = Math.floor((screenWidth / 2 ) - ( IMAGE_BACKGROUND_WIDTH / 2 ));
 
-      if (demoBottomY < 0) {
-        game.setGameStatus(Game.Verdict.PAUSE);
+      if (this._isCloudsVisible(cloudsBottomY)) {
+        this._cloudLeftRight(clouds, scrollHeight, leftImageCcoordinate, true);
       }
+
       if ((Date.now() - lastCall >= THROTTLE_DELAY)) {
-        if (cloudsBottomY > 0) {
-          if (window.pageYOffset > scrollHeight) {
-            clouds.style.backgroundPositionX = leftImageCcoordinate + shiftBackground + 'px';
-            shiftBackground -= 1;
-          } else {
-            clouds.style.backgroundPositionX = leftImageCcoordinate + shiftBackground + 'px';
-            shiftBackground += 1;
-          }
-        } else
-          if (demoBottomY < 0) {
-            game.setGameStatus(Game.Verdict.PAUSE);
-          }
+        if (!this._isDemoVisible(demoBottomY)) {
+          game.setGameStatus(Game.Verdict.PAUSE);
+          console.log('пауза');
+        }
+        if (!this._isCloudsVisible(cloudsBottomY)) {
+          this._cloudLeftRight(clouds, scrollHeight, leftImageCcoordinate, false);
+        }
       }
+
       lastCall = Date.now();
       scrollHeight = window.pageYOffset;
     },
@@ -763,3 +784,4 @@
   game.initializeLevelAndStart();
   game.setGameStatus(window.Game.Verdict.INTRO);
 })();
+
