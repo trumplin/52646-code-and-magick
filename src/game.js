@@ -173,6 +173,8 @@
   var lastCall = Date.now();
   var shiftBackground = 0;
   var scrollHeight = window.pageYOffset;
+  var clouds = document.querySelector('.header-clouds');
+  var demo = document.querySelector('.demo');
   /**
    * ID возможных ответов функций, проверяющих успех прохождения уровня.
    * CONTINUE говорит о том, что раунд не закончен и игру нужно продолжать,
@@ -659,51 +661,32 @@
       }
     },
 
-    _isDemoVisible: function(demoDiv) {
-      return demoDiv > 0;
-    },
-
-    _isCloudsVisible: function(cloudsDiv) {
-      return cloudsDiv > 0;
-    },
-
-    _cloudLeftRight: function(div, scroll, leftCoord, flag) {
-      if (flag) {
-        if (window.pageYOffset > scrollHeight) {
-          div.style.backgroundPositionX = leftCoord + shiftBackground + 'px';
-          shiftBackground -= 1;
-          console.log('влево');
-        } else {
-          div.style.backgroundPositionX = leftCoord + shiftBackground + 'px';
-          shiftBackground += 1;
-          console.log('вправо');
-        }
+    _cloudLeftRight: function(scroll) {
+      var screenWidth = clouds.getBoundingClientRect().right - clouds.getBoundingClientRect().left;
+      var leftImageCoordinate = Math.floor((screenWidth / 2 ) - ( IMAGE_BACKGROUND_WIDTH / 2 ));
+      if (window.pageYOffset > scroll) {
+        clouds.style.backgroundPositionX = leftImageCoordinate + shiftBackground + 'px';
+        shiftBackground -= 1;
+        console.log('влево');
       } else {
-        console.log('не двигаем');
+        clouds.style.backgroundPositionX = leftImageCoordinate + shiftBackground + 'px';
+        shiftBackground += 1;
+      //  console.log('вправо');
       }
     },
 
     _onScroll: function() {
-      var clouds = document.querySelector('.header-clouds');
-      var cloudsPosition = clouds.getBoundingClientRect();
-      var cloudsBottomY = cloudsPosition.bottom;
-      var demo = document.querySelector('.demo');
-      var demoPosition = demo.getBoundingClientRect();
-      var demoBottomY = demoPosition.bottom;
-      var screenWidth = cloudsPosition.right - cloudsPosition.left;
-      var leftImageCcoordinate = Math.floor((screenWidth / 2 ) - ( IMAGE_BACKGROUND_WIDTH / 2 ));
 
-      if (this._isCloudsVisible(cloudsBottomY)) {
-        this._cloudLeftRight(clouds, scrollHeight, leftImageCcoordinate, true);
+      if (clouds.getBoundingClientRect().bottom > 0) {
+        this._cloudLeftRight(scrollHeight);
+      } else {
+        console.log('не двигаем');
       }
 
       if ((Date.now() - lastCall >= THROTTLE_DELAY)) {
-        if (!this._isDemoVisible(demoBottomY)) {
+        if (demo.getBoundingClientRect().bottom < 0) {
           game.setGameStatus(Game.Verdict.PAUSE);
           console.log('пауза');
-        }
-        if (!this._isCloudsVisible(cloudsBottomY)) {
-          this._cloudLeftRight(clouds, scrollHeight, leftImageCcoordinate, false);
         }
       }
 
