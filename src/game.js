@@ -168,11 +168,13 @@
     }
   };
 
-  var THROTTLE_DELAY = 10;
+  var THROTTLE_DELAY = 100;
   var IMAGE_BACKGROUND_WIDTH = 1024;
   var lastCall = Date.now();
   var shiftBackground = 0;
   var scrollHeight = window.pageYOffset;
+  var clouds = document.querySelector('.header-clouds');
+  var demo = document.querySelector('.demo');
   /**
    * ID возможных ответов функций, проверяющих успех прохождения уровня.
    * CONTINUE говорит о том, что раунд не закончен и игру нужно продолжать,
@@ -659,33 +661,35 @@
       }
     },
 
-    _onScroll: function() {
-      var clouds = document.querySelector('.header-clouds');
-      var cloudsPosition = clouds.getBoundingClientRect();
-      var cloudsBottomY = cloudsPosition.bottom;
-      var demo = document.querySelector('.demo');
-      var demoPosition = demo.getBoundingClientRect();
-      var demoBottomY = demoPosition.bottom;
-      var screenWidth = cloudsPosition.right - cloudsPosition.left;
-      var leftImageCcoordinate = Math.floor((screenWidth / 2 ) - ( IMAGE_BACKGROUND_WIDTH / 2 ));
+    _cloudLeftRight: function(scroll) {
+      var screenWidth = clouds.getBoundingClientRect().right - clouds.getBoundingClientRect().left;
+      var leftImageCoordinate = Math.floor((screenWidth / 2 ) - ( IMAGE_BACKGROUND_WIDTH / 2 ));
+      if (window.pageYOffset > scroll) {
+        clouds.style.backgroundPositionX = leftImageCoordinate + shiftBackground + 'px';
+        shiftBackground -= 1;
+        console.log('влево');
+      } else {
+        clouds.style.backgroundPositionX = leftImageCoordinate + shiftBackground + 'px';
+        shiftBackground += 1;
+      //  console.log('вправо');
+      }
+    },
 
-      if (demoBottomY < 0) {
-        game.setGameStatus(Game.Verdict.PAUSE);
+    _onScroll: function() {
+
+      if (clouds.getBoundingClientRect().bottom > 0) {
+        this._cloudLeftRight(scrollHeight);
+      } else {
+        console.log('не двигаем');
       }
+
       if ((Date.now() - lastCall >= THROTTLE_DELAY)) {
-        if (cloudsBottomY > 0) {
-          if (window.pageYOffset > scrollHeight) {
-            clouds.style.backgroundPositionX = leftImageCcoordinate + shiftBackground + 'px';
-            shiftBackground -= 1;
-          } else {
-            clouds.style.backgroundPositionX = leftImageCcoordinate + shiftBackground + 'px';
-            shiftBackground += 1;
-          }
-        } else
-          if (demoBottomY < 0) {
-            game.setGameStatus(Game.Verdict.PAUSE);
-          }
+        if (demo.getBoundingClientRect().bottom < 0) {
+          game.setGameStatus(Game.Verdict.PAUSE);
+          console.log('пауза');
+        }
       }
+
       lastCall = Date.now();
       scrollHeight = window.pageYOffset;
     },
@@ -763,3 +767,4 @@
   game.initializeLevelAndStart();
   game.setGameStatus(window.Game.Verdict.INTRO);
 })();
+
