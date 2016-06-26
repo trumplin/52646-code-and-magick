@@ -171,10 +171,11 @@
   var THROTTLE_DELAY = 100;
   var IMAGE_BACKGROUND_WIDTH = 1024;
   var lastCall = Date.now();
-  var shiftBackground = 0;
   var scrollHeight = window.pageYOffset;
   var clouds = document.querySelector('.header-clouds');
   var demo = document.querySelector('.demo');
+  var utils = require('./game-utils');
+
   /**
    * ID возможных ответов функций, проверяющих успех прохождения уровня.
    * CONTINUE говорит о том, что раунд не закончен и игру нужно продолжать,
@@ -258,9 +259,7 @@
     this.canvas.width = container.clientWidth;
     this.canvas.height = container.clientHeight;
     this.container.appendChild(this.canvas);
-
     this.ctx = this.canvas.getContext('2d');
-
     this._onKeyDown = this._onKeyDown.bind(this);
     this._onKeyUp = this._onKeyUp.bind(this);
     this._onScroll = this._onScroll.bind(this);
@@ -661,35 +660,16 @@
       }
     },
 
-    _cloudLeftRight: function(scroll) {
-      var screenWidth = clouds.getBoundingClientRect().right - clouds.getBoundingClientRect().left;
-      var leftImageCoordinate = Math.floor((screenWidth / 2 ) - ( IMAGE_BACKGROUND_WIDTH / 2 ));
-      if (window.pageYOffset > scroll) {
-        clouds.style.backgroundPositionX = leftImageCoordinate + shiftBackground + 'px';
-        shiftBackground -= 1;
-        console.log('влево');
-      } else {
-        clouds.style.backgroundPositionX = leftImageCoordinate + shiftBackground + 'px';
-        shiftBackground += 1;
-      //  console.log('вправо');
-      }
-    },
 
     _onScroll: function() {
-
       if (clouds.getBoundingClientRect().bottom > 0) {
-        this._cloudLeftRight(scrollHeight);
-      } else {
-        console.log('не двигаем');
+        utils.cloudLeftRight(clouds, scrollHeight, IMAGE_BACKGROUND_WIDTH);
       }
-
       if ((Date.now() - lastCall >= THROTTLE_DELAY)) {
         if (demo.getBoundingClientRect().bottom < 0) {
           game.setGameStatus(Game.Verdict.PAUSE);
-          console.log('пауза');
         }
       }
-
       lastCall = Date.now();
       scrollHeight = window.pageYOffset;
     },

@@ -24,6 +24,12 @@
   };
   var DEFAULT_FILTER = Filter.ALL;
 
+
+
+  //var load = require('./load');
+  var utils = require('./reviews-utils');
+
+
   if ('content' in templateElement) {
     elementToClone = templateElement.content.querySelector('.review');
   } else{
@@ -147,26 +153,6 @@
     });
   };
 
-  var getReviews = function(callback) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.onload = function(evt) {
-      var loadedData = JSON.parse(evt.target.response);
-      callback(loadedData);
-    };
-
-    xhr.onerror = function() {
-      reviewsBlock.classList.add('reviews-load-failure');
-    };
-    xhr.open('GET', REVIEWS_LIST_URL);
-
-    xhr.send();
-  };
-
-  var isNextPageAvailable = function(review, page) {
-    return (page + 1) < (Math.ceil(review.length / PAGE_SIZE));
-  };
-
   moreReviewsButton.onclick = function() {
     pageNumber++;
     renderReviews(filteredReviews, pageNumber);
@@ -174,14 +160,14 @@
   };
 
   var setMoreReviewsButtonEnabled = function() {
-    if (isNextPageAvailable(filteredReviews, pageNumber)) {
+    if (utils.isNextPageAvailable(filteredReviews, pageNumber, PAGE_SIZE)) {
       moreReviewsButton.classList.remove('invisible');
     } else {
       moreReviewsButton.classList.add('invisible');
     }
   };
 
-  getReviews(function(loadedReviews) {
+  utils.load(REVIEWS_LIST_URL, reviewsBlock, function(loadedReviews) {
     reviews = loadedReviews;
     setFiltersEnabled();
     setFilterEnabled(DEFAULT_FILTER);
