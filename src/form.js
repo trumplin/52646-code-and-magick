@@ -1,11 +1,10 @@
 'use strict';
-var browserCookies = require('browser-cookies');
-var formUtility = require('./form-utils');
-var MYDATE = 9;
-var MYMONTH = 6;
-var DEFAULTMARK = 3;
 
 (function() {
+  var MYDATE = 9;
+  var MYMONTH = 6;
+  var DEFAULTMARK = 3;
+  var browserCookies = require('browser-cookies');
   var formContainer = document.querySelector('.overlay-container');
   var formOpenButton = document.querySelector('.reviews-controls-new');
   var formCloseButton = document.querySelector('.review-form-close');
@@ -42,10 +41,25 @@ var DEFAULTMARK = 3;
 
   submitButton.onclick = function(evt) {
     evt.preventDefault();
-    var expires = formUtility.getExpires(MYDATE, MYMONTH);
+    var expires = getExpires(MYDATE, MYMONTH);
     browserCookies.set('mark', selectedReviewMark, {expires: expires});
     browserCookies.set('name', reviewName.value, {expires: expires});
-    console.log(expires);
+  };
+
+  var getExpires = function(myDate, myMonth) {
+    var now = new Date();
+    var currentDate = now.getDate();
+    var currentMonth = now.getMonth();
+    var currentYear = now.getFullYear();
+    var myYear;
+    if (currentMonth >= myMonth && currentDate >= myDate) {
+      myYear = currentYear;
+    } else {
+      myYear = currentYear - 1;
+    }
+    var birthday = new Date(myYear, myMonth, myDate);
+    var difference = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
+    return difference;
   };
 
 

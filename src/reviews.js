@@ -23,11 +23,7 @@
     'POPULAR': 'reviews-popular'
   };
   var DEFAULT_FILTER = Filter.ALL;
-
-
-
-  //var load = require('./load');
-  var utils = require('./reviews-utils');
+  var load = require('./load');
 
 
   if ('content' in templateElement) {
@@ -159,15 +155,20 @@
     setMoreReviewsButtonEnabled();
   };
 
+  var isNextPageAvailable = function(review, page, pageSize) {
+    return (page + 1) < (Math.ceil(review.length / pageSize));
+  };
+
+
   var setMoreReviewsButtonEnabled = function() {
-    if (utils.isNextPageAvailable(filteredReviews, pageNumber, PAGE_SIZE)) {
+    if (isNextPageAvailable(filteredReviews, pageNumber, PAGE_SIZE)) {
       moreReviewsButton.classList.remove('invisible');
     } else {
       moreReviewsButton.classList.add('invisible');
     }
   };
 
-  utils.load(REVIEWS_LIST_URL, reviewsBlock, function(loadedReviews) {
+  load(REVIEWS_LIST_URL, reviewsBlock, function(loadedReviews) {
     reviews = loadedReviews;
     setFiltersEnabled();
     setFilterEnabled(DEFAULT_FILTER);

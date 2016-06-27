@@ -1,3 +1,6 @@
+'use strict';
+
+(function(){
 function getMessage(a, b) {
   "use strict";
 
@@ -31,3 +34,6 @@ function getMessage(a, b) {
     return 'Я прошёл ' + sum + ' шагов';
   }
 }
+  
+})();
+

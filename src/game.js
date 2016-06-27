@@ -174,7 +174,7 @@
   var scrollHeight = window.pageYOffset;
   var clouds = document.querySelector('.header-clouds');
   var demo = document.querySelector('.demo');
-  var utils = require('./game-utils');
+  var shiftBackground = 0;
 
   /**
    * ID возможных ответов функций, проверяющих успех прохождения уровня.
@@ -660,10 +660,21 @@
       }
     },
 
+    _cloudLeftRight: function(element, scroll, imageBackgroundWidth) {
+      var screenWidth = element.getBoundingClientRect().right - element.getBoundingClientRect().left;
+      var leftImageCoordinate = Math.floor((screenWidth / 2 ) - ( imageBackgroundWidth / 2 ));
+      if (window.pageYOffset > scroll) {
+        element.style.backgroundPositionX = leftImageCoordinate + shiftBackground + 'px';
+        shiftBackground -= 1;
+      } else {
+        element.style.backgroundPositionX = leftImageCoordinate + shiftBackground + 'px';
+        shiftBackground += 1;
+      }
+    },
 
     _onScroll: function() {
       if (clouds.getBoundingClientRect().bottom > 0) {
-        utils.cloudLeftRight(clouds, scrollHeight, IMAGE_BACKGROUND_WIDTH);
+        this._cloudLeftRight(clouds, scrollHeight, IMAGE_BACKGROUND_WIDTH);
       }
       if ((Date.now() - lastCall >= THROTTLE_DELAY)) {
         if (demo.getBoundingClientRect().bottom < 0) {
