@@ -24,6 +24,7 @@
   };
   var DEFAULT_FILTER = Filter.ALL;
   var load = require('./load');
+  var gallery = require('./gallery');
 
 
   if ('content' in templateElement) {
@@ -159,7 +160,6 @@
     return (page + 1) < (Math.ceil(review.length / pageSize));
   };
 
-
   var setMoreReviewsButtonEnabled = function() {
     if (isNextPageAvailable(filteredReviews, pageNumber, PAGE_SIZE)) {
       moreReviewsButton.classList.remove('invisible');
@@ -172,5 +172,6 @@
     reviews = loadedReviews;
     setFiltersEnabled();
     setFilterEnabled(DEFAULT_FILTER);
+    gallery.setGallaryEnabled();
   });
 })();
