@@ -2,17 +2,17 @@
 
 (function() {
 
-  var gallaryBlock = document.querySelector('.overlay-gallery');
-  var imagePreview = gallaryBlock.querySelector('.overlay-gallery-preview');
+  var galleryBlock = document.querySelector('.overlay-gallery');
+  var imagePreview = galleryBlock.querySelector('.overlay-gallery-preview');
   var array = [];
   var indexImage;
   var oldImage;
 
 
   var setGallaryEnabled = function() {
-    gallaryBlock.addEventListener('click', onCloseClick);
-    gallaryBlock.addEventListener('click', onLeftClick);
-    gallaryBlock.addEventListener('click', onRightClick);
+    galleryBlock.addEventListener('click', onCloseClick);
+    galleryBlock.addEventListener('click', onLeftClick);
+    galleryBlock.addEventListener('click', onRightClick);
     window.addEventListener('keydown', onDocumentKeyDown);
   };
 
@@ -35,17 +35,6 @@
     }
   };
 
-  module.exports.getIndexOfImage = function(curruent) {
-    for( var i = 0; i < array.length; i++) {
-      if (curruent === array[i]) {
-        indexImage = i;
-        break;
-      }
-    }
-    return indexImage;
-  };
-
-
   function onLeftClick(evt) {
     if (evt.target.className === 'overlay-gallery-control overlay-gallery-control-left') {
       if (indexImage > 0) {
@@ -55,7 +44,6 @@
       } else {
         indexImage = array.length - 1;
         showImage(array.length - 1, true);
-
       }
     }
   }
@@ -85,17 +73,18 @@
   };
 
   module.exports.showGallary = function(index) {
-    gallaryBlock.classList.remove('invisible');
+    indexImage = index;
+    galleryBlock.classList.remove('invisible');
     showImage(index);
     setGallaryEnabled();
   };
 
   var hideGallary = function() {
-    gallaryBlock.classList.add('invisible');
+    galleryBlock.classList.add('invisible');
     imagePreview.removeChild(oldImage);
-    gallaryBlock.removeEventListener('click', onCloseClick);
-    gallaryBlock.removeEventListener('click', onLeftClick);
-    gallaryBlock.removeEventListener('click', onRightClick);
+    galleryBlock.removeEventListener('click', onCloseClick);
+    galleryBlock.removeEventListener('click', onLeftClick);
+    galleryBlock.removeEventListener('click', onRightClick);
     window.removeEventListener('keydown', onDocumentKeyDown);
   };
 })();
