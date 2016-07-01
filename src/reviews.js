@@ -172,6 +172,6 @@
     reviews = loadedReviews;
     setFiltersEnabled();
     setFilterEnabled(DEFAULT_FILTER);
-  
+
   });
 })();
