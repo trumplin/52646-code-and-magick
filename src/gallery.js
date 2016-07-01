@@ -3,30 +3,19 @@
 (function() {
 
   var gallaryBlock = document.querySelector('.overlay-gallery');
-  var imagesBlock = document.querySelector('.photogallery');
-  var images = imagesBlock.querySelectorAll('img');
   var imagePreview = gallaryBlock.querySelector('.overlay-gallery-preview');
   var array = [];
   var indexImage;
   var oldImage;
 
 
-  module.exports.setGallaryEnabled = function() {
-    imagesBlock.addEventListener('click', onImageClick);
+  var setGallaryEnabled = function() {
     gallaryBlock.addEventListener('click', onCloseClick);
     gallaryBlock.addEventListener('click', onLeftClick);
     gallaryBlock.addEventListener('click', onRightClick);
     window.addEventListener('keydown', onDocumentKeyDown);
-
   };
 
-  function onImageClick(evt) {
-    if (evt.target.tagName === 'IMG') {
-      getImagesList();
-      getIndexOfImage(evt.target.currentSrc);
-      showGallary(array[indexImage]);
-    }
-  }
 
   function onCloseClick(evt) {
     if (evt.target.className === 'overlay-gallery-close') {
@@ -39,7 +28,8 @@
       hideGallary();
     }
   }
-  var getImagesList = function() {
+
+  module.exports.setImagesList = function(images) {
     for( var i = 0; i < images.length; i++) {
       array[i] = images[i].src;
     }
@@ -52,7 +42,9 @@
         break;
       }
     }
+    return indexImage;
   }
+
 
   function onLeftClick(evt) {
     if (evt.target.className === 'overlay-gallery-control overlay-gallery-control-left') {
@@ -88,13 +80,19 @@
     oldImage = imagePreview.appendChild(image);
   };
 
-  var showGallary = function(picture) {
+  module.exports.showGallary = function(picture) {
+    getIndexOfImage(picture);
     gallaryBlock.classList.remove('invisible');
     showImage(picture);
+    setGallaryEnabled();
   };
 
   var hideGallary = function() {
     gallaryBlock.classList.add('invisible');
     imagePreview.removeChild(oldImage);
+    gallaryBlock.removeEventListener('click', onCloseClick);
+    gallaryBlock.removeEventListener('click', onLeftClick);
+    gallaryBlock.removeEventListener('click', onRightClick);
+    window.removeEventListener('keydown', onDocumentKeyDown);
   };
 })();

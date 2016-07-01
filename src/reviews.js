@@ -24,7 +24,7 @@
   };
   var DEFAULT_FILTER = Filter.ALL;
   var load = require('./load');
-  var gallery = require('./gallery');
+
 
 
   if ('content' in templateElement) {
@@ -172,6 +172,6 @@
     reviews = loadedReviews;
     setFiltersEnabled();
     setFilterEnabled(DEFAULT_FILTER);
-    gallery.setGallaryEnabled();
+  
   });
 })();
