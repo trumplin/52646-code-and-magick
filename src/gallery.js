@@ -35,7 +35,7 @@
     }
   };
 
-  function getIndexOfImage(curruent) {
+  module.exports.getIndexOfImage = function(curruent) {
     for( var i = 0; i < array.length; i++) {
       if (curruent === array[i]) {
         indexImage = i;
@@ -43,17 +43,19 @@
       }
     }
     return indexImage;
-  }
+  };
 
 
   function onLeftClick(evt) {
     if (evt.target.className === 'overlay-gallery-control overlay-gallery-control-left') {
       if (indexImage > 0) {
-        showImage(array[indexImage - 1], true);
         indexImage -= 1;
+        showImage(indexImage, true);
+
       } else {
-        showImage(array[array.length - 1], true);
         indexImage = array.length - 1;
+        showImage(array.length - 1, true);
+
       }
     }
   }
@@ -62,28 +64,29 @@
   function onRightClick(evt) {
     if (evt.target.className === 'overlay-gallery-control overlay-gallery-control-right') {
       if (indexImage < 5) {
-        showImage(array[indexImage + 1], true);
         indexImage += 1;
+        showImage(indexImage, true);
+
       } else {
-        showImage(array[0], true);
         indexImage = 0;
+        showImage(indexImage, true);
+
       }
     }
   }
 
-  var showImage = function(picture, flag) {
+  var showImage = function(index, flag) {
     var image = new Image();
-    image.src = picture;
+    image.src = array[index];
     if (flag) {
       imagePreview.replaceChild(image, oldImage);
     }
     oldImage = imagePreview.appendChild(image);
   };
 
-  module.exports.showGallary = function(picture) {
-    getIndexOfImage(picture);
+  module.exports.showGallary = function(index) {
     gallaryBlock.classList.remove('invisible');
-    showImage(picture);
+    showImage(index);
     setGallaryEnabled();
   };
 

@@ -9,11 +9,12 @@
   var images = imagesBlock.querySelectorAll('img');
 
   imagesBlock.addEventListener('click', onImageClick);
+  gallery.setImagesList(images);
 
   function onImageClick(evt) {
     if (evt.target.tagName === 'IMG') {
-      gallery.setImagesList(images);
-      gallery.showGallary(evt.target.currentSrc);
+      var index = gallery.getIndexOfImage(evt.target.currentSrc);
+      gallery.showGallary(index);
     }
   }
 
